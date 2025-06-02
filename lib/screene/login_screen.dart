@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-// Make sure this import points to your PhoneOTPScreen file
-import 'package:project1/screene/phone_otp_screen.dart';
-import 'package:project1/screene/register_screen.dart';
+import 'package:project1/route/app_route.dart';
+// The direct imports below are not strictly necessary if all navigation
+// is done via AppRoute and screens are instantiated there.
+// However, they don't hurt and might be useful if you ever need to reference the types directly.
+// import 'package:project1/screene/phone_otp_screen.dart';
+// import 'package:project1/screene/register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -12,8 +15,16 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool _isObscure = true;
+  bool _isValidEmail = false; // Track email validation state
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +78,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget get _logo {
     return Image.asset(
-      'assets/images/logo.png',
+      'assets/images/logo.png', // Ensure this asset exists in your project
       width: 180,
       height: 180,
       fit: BoxFit.contain,
@@ -77,10 +88,19 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget get _usernameField {
     return TextField(
       controller: _usernameController,
-      decoration: const InputDecoration(
-          prefixIcon: Icon(Icons.person_outline),
-          labelText: 'Username or Email',
-          border: OutlineInputBorder()),
+      onChanged: (value) {
+        setState(() {
+          _isValidEmail = value.contains("@");
+        });
+      },
+      decoration: InputDecoration(
+        prefixIcon: const Icon(Icons.person_outline),
+        suffixIcon: _isValidEmail
+            ? const Icon(Icons.check_circle, color: Colors.green)
+            : null,
+        labelText: 'Email',
+        border: const OutlineInputBorder(),
+      ),
     );
   }
 
@@ -127,23 +147,37 @@ class _LoginScreenState extends State<LoginScreen> {
     String password = _passwordController.text.trim();
 
     if (username.isEmpty || password.isEmpty) {
-       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter both username and password.')),
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text('Please enter both username and password.')),
       );
       return;
     }
 
     print('Attempting to login:');
     print('Username: $username');
-    print('Password: $password');
+    print('Password: $password'); // Be cautious about printing passwords.
 
-    // Navigate after successful login attempt
-    Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-            builder: (context) => PhoneOTPScreen(username: username), // MODIFIED HERE
-        ),
-    );
+    // Example hardcoded login check
+    if (username == "sophannara@gmail.com" && password == "12345678") {
+      // Navigate to MainScreen, passing username as argument.
+      // Using pushNamedAndRemoveUntil to clear the login screen from the back stack.
+      AppRoute.key.currentState?.pushNamedAndRemoveUntil(
+        AppRoute.mainScreen,
+        (route) => false, // Removes all previous routes
+        arguments: username, // Pass the username as an argument
+      );
+    } else {
+      // ignore: non_constant_identifier_names
+      final alertDialog = AlertDialog(
+        title: Icon(Icons.error ,color: Colors.red,size: 80,),
+        content: Text("Password is invalid"),
+      );
+      showDialog(context: context, builder: (context)=>alertDialog);
+    }
+
+    // If you intend to go to PhoneOTPScreen for verification after any login attempt:
+    // AppRoute.key.currentState?.pushNamed(AppRoute.phoneScreen, arguments: username);
   }
 
   Widget get _forgotPasswordLink {
@@ -153,6 +187,10 @@ class _LoginScreenState extends State<LoginScreen> {
         TextButton(
             onPressed: () {
               print("Forgot password tapped");
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                    content: Text('Forgot Password tapped (Not Implemented)')),
+              );
             },
             child: const Text(
               'Forgot Password?',
@@ -169,9 +207,13 @@ class _LoginScreenState extends State<LoginScreen> {
         IconButton(
             onPressed: () {
               print("Google login tapped");
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                    content: Text('Google login tapped (Not Implemented)')),
+              );
             },
             icon: Image.asset(
-              'assets/images/google.png',
+              'assets/images/google.png', // Ensure this asset exists
               width: 35,
               height: 35,
             )),
@@ -179,9 +221,13 @@ class _LoginScreenState extends State<LoginScreen> {
         IconButton(
             onPressed: () {
               print("Facebook login tapped");
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                    content: Text('Facebook login tapped (Not Implemented)')),
+              );
             },
             icon: Image.asset(
-              'assets/images/facebook.png',
+              'assets/images/facebook.png', // Ensure this asset exists
               width: 35,
               height: 35,
             )),
@@ -205,6 +251,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _navigateToRegister() {
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const RegisterScreen()));
+    // Assumes RegisterScreen takes no arguments
+    AppRoute.key.currentState?.pushNamed(AppRoute.registerScreen);
   }
 }

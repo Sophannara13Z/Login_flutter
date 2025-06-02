@@ -1,87 +1,71 @@
+
 import 'package:flutter/material.dart';
-// If you want a logout button to go back to LoginScreen
-// import 'package:project1/screene/login_screen.dart';
+import 'package:project1/screene/account_screen.dart';
+import 'package:project1/screene/cart_screen.dart';
+import 'package:project1/screene/favorite_screen.dart';
+import 'package:project1/screene/home_screen.dart';
+
 
 class MainScreen extends StatefulWidget {
-  final String username; // MODIFIED: To accept username
 
-  const MainScreen({super.key, required this.username}); // MODIFIED: Constructor
+  final String username;
+  const MainScreen({super.key,required this.username});
 
   @override
   State<MainScreen> createState() => _MainScreenState();
 }
 
 class _MainScreenState extends State<MainScreen> {
+ late List<Widget> _screens; // Use 'late' for initialization in initState
+  int _selectedIndex = 0;
+  @override
+  void initState() {
+    super.initState();
+    // Initialize the _screens list here, passing the username to relevant screens
+    _screens = [
+      HomeScreen(username: widget.username), // Pass username to HomeScreen
+      FavoriteScreen(), // Assuming FavoriteScreen doesn't need username directly
+      CartScreen(),     // Assuming CartScreen doesn't need username directly
+      AccountScreen(username: widget.username), // Pass username to AccountScreen
+    ];
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: _appBar,
       body: _body,
-    );
-  }
-
-  PreferredSizeWidget get _appBar {
-    return AppBar(
-      title: const Text(
-        "Home Page",
-        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
-      ),
-      centerTitle: true,
-      backgroundColor: Colors.white,
-      elevation: 0,
-      // Example Logout Button
-      // actions: [
-      //   IconButton(
-      //     icon: const Icon(Icons.logout, color: Colors.black54),
-      //     onPressed: () {
-      //       Navigator.pushAndRemoveUntil(
-      //         context,
-      //         MaterialPageRoute(builder: (context) => const LoginScreen()),
-      //         (Route<dynamic> route) => false,
-      //       );
-      //     },
-      //   ),
-      // ],
+      bottomNavigationBar: _bottomNavBar,
     );
   }
 
   Widget get _body {
-    return Center(
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            _logo,
-            const SizedBox(height: 30),
-            Text( // MODIFIED HERE: Display the username
-              "Hi ${widget.username}!",
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                  fontSize: 26, // Slightly larger
-                  fontWeight: FontWeight.bold,
-                  color: Colors.blueAccent),
-            ),
-            const SizedBox(height: 15),
-            const Text(
-              "Welcome to your dashboard.",
-               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 16, color: Colors.black54),
-            )
-          ],
-        ),
-      ),
-    );
+    return _screens[_selectedIndex];
   }
 
-  Widget get _logo {
-    return Image.asset(
-      'assets/images/logo.png',
-      width: 180,
-      height: 180,
-      fit: BoxFit.contain,
+  Widget get _bottomNavBar {
+
+    final bottonNavBarItems = [
+      BottomNavigationBarItem(icon: Icon(Icons.home, color: Colors.red,), label: "Home"),
+      BottomNavigationBarItem(icon: Icon(Icons.favorite, color: Colors.red), label: "Favorite"),
+      BottomNavigationBarItem(icon: Icon(Icons.shopping_cart, color: Colors.red), label: "Cart"),
+      BottomNavigationBarItem(icon: Icon(Icons.person, color: Colors.red), label: "Account"),
+    ];
+
+    return BottomNavigationBar(
+      elevation: 2.5,
+      items: bottonNavBarItems,
+      currentIndex: _selectedIndex,
+      onTap: _onItemTapped,
+      backgroundColor: Colors.white,
+      selectedItemColor: Colors.red,
+      unselectedItemColor: Colors.grey,
+      showSelectedLabels: true,
+      showUnselectedLabels: true,
     );
   }
 }

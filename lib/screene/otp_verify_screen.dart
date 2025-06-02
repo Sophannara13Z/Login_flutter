@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:pinput/pinput.dart'; // Ensure you have this in pubspec.yaml
+import 'package:project1/route/app_route.dart';
+import 'package:project1/screene/home_screen.dart';
 import 'package:project1/screene/main_screen.dart';
 // If you need to navigate back to PhoneOTPScreen
 // import 'package:project1/screene/phone_otp_screen.dart';
 
 class OTPVerifyScreen extends StatefulWidget {
-  final String username; // MODIFIED: To accept username
-
-  const OTPVerifyScreen({super.key, required this.username}); // MODIFIED: Constructor
 
   @override
   State<OTPVerifyScreen> createState() => _OTPVerifyScreenState();
@@ -77,10 +76,7 @@ class _OTPVerifyScreenState extends State<OTPVerifyScreen> {
               "Enter OTP sent for user:",
               style: TextStyle(fontSize: 16, color: Colors.grey[600]),
             ),
-            Text(
-              widget.username,
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.blueAccent[700]),
-            ),
+          
             const SizedBox(height: 30),
             _otpVerifyField(), // Use the configured Pinput
             const SizedBox(height: 40),
@@ -165,16 +161,11 @@ class _OTPVerifyScreenState extends State<OTPVerifyScreen> {
     String otp = _otpController.text.trim();
 
     // TODO: Implement actual OTP verification logic here
-    print('Verifying OTP: $otp for user: ${widget.username}');
+   
     bool isOtpValid = true; // Replace with actual validation
 
     if (isOtpValid) {
-      Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (context) => MainScreen(username: widget.username), // MODIFIED HERE
-          ),
-      );
+      AppRoute.key.currentState?.pushNamed(AppRoute.mainScreen);
     } else {
        ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Invalid OTP. Please try again.')),

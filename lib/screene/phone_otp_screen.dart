@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:project1/route/app_route.dart';
 // Make sure this import points to your OTPVerifyScreen file
 import 'package:project1/screene/otp_verify_screen.dart';
 // If you need to navigate back to LoginScreen or RegisterScreen in some edge cases
 // import 'package:project1/screene/login_screen.dart';
 
 class PhoneOTPScreen extends StatefulWidget {
-  final String username; // MODIFIED: To accept username
-
-  const PhoneOTPScreen({super.key, required this.username}); // MODIFIED: Constructor
+// MODIFIED: Constructor
 
   @override
   State<PhoneOTPScreen> createState() => _PhoneOTPScreenState();
@@ -63,10 +62,7 @@ class _PhoneOTPScreenState extends State<PhoneOTPScreen> {
             const SizedBox(height: 20),
             _logo,
             const SizedBox(height: 30), 
-            Text(
-              widget.username,
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.blueAccent[700]),
-            ),
+           
             const SizedBox(height: 30),
             _phoneNumberField,
             const SizedBox(height: 40),
@@ -139,6 +135,8 @@ class _PhoneOTPScreenState extends State<PhoneOTPScreen> {
         const SnackBar(content: Text('Please enter your phone number.')),
       );
       return;
+    }else{
+     AppRoute.key.currentState?.pushNamed(AppRoute.otpScreen);
     }
     // Add more robust phone number validation if needed
 
@@ -146,11 +144,6 @@ class _PhoneOTPScreenState extends State<PhoneOTPScreen> {
 
     // TODO: Implement actual OTP sending logic here
 
-    Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-            builder: (context) => OTPVerifyScreen(username: widget.username), // MODIFIED HERE
-        ),
-    );
+    
   }
 }

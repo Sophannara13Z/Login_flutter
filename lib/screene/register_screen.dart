@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:project1/route/app_route.dart';
 import 'package:project1/screene/login_screen.dart';
 // Make sure this import points to your PhoneOTPScreen file
 import 'package:project1/screene/phone_otp_screen.dart';
@@ -12,8 +13,11 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   bool _isObscure = true;
-  final TextEditingController _createusernameController = TextEditingController();
-  final TextEditingController _createpasswordController = TextEditingController();
+  bool _isValidEmail = false;
+  final TextEditingController _createusernameController =
+      TextEditingController();
+  final TextEditingController _createpasswordController =
+      TextEditingController();
 
   @override
   void dispose() {
@@ -82,10 +86,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget get _usernameField {
     return TextField(
       controller: _createusernameController,
-      decoration: const InputDecoration(
-          prefixIcon: Icon(Icons.person_outline),
+      onChanged: (value) {
+        setState(() {
+          _isValidEmail = value.contains("@");
+        });
+      },
+      decoration: InputDecoration(
+          prefixIcon: const Icon(Icons.person_outline),
+          suffixIcon: _isValidEmail
+              ? const Icon(Icons.check_circle, color: Colors.green)
+              : null,
           labelText: 'Username or Email',
-          border: OutlineInputBorder()),
+          border: const OutlineInputBorder()),
     );
   }
 
@@ -139,21 +151,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
     if (createpassword.isEmpty || createpassword.length < 6) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Password must be at least 6 characters.')),
+        const SnackBar(
+            content: Text('Password must be at least 6 characters.')),
       );
       return;
+    } else {
+      AppRoute.key.currentState?.pushNamed(AppRoute.phoneScreen);
     }
 
     print('Attempting to register:');
     print('Username: $createusername');
     print('Password: $createpassword');
-
-    Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-            builder: (context) => PhoneOTPScreen(username: createusername), // MODIFIED HERE
-        ),
-    );
   }
 
   Widget get _socialLoginButtons {
@@ -197,8 +205,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       ],
     );
   }
-
   void _navigateToLogin() {
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginScreen()));
+    AppRoute.key.currentState?.pushNamed(AppRoute.loginScreen);
   }
 }
