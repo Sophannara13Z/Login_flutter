@@ -26,7 +26,7 @@ class AppRoute {
       case registerScreen:
         return _buildRoute(routeSettings, RegisterScreen());
       case mainScreen:
-        return _buildRoute(routeSettings, MainScreen(username: routeSettings.arguments as String));
+        return _buildRoute(routeSettings, MainScreen());
       case phoneScreen:
         return _buildRoute(routeSettings, PhoneOTPScreen());
       case otpScreen:

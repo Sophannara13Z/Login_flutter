@@ -4,10 +4,7 @@ import 'package:project1/screene/custom_search_delegate.dart';
 
 
 class HomeScreen extends StatefulWidget {
-   final String username; // MODIFIED: To accept username
-
-  // const MainScreen({super.key, required this.username});
-  const HomeScreen({super.key,required this.username});
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -27,7 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
           color: Colors.black,
         ),
         title: Text(
-          "Hi,  ${widget.username}", // MODIFIED: Use widget.username
+          "Hi, Sophannara",
           style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
         actions: [

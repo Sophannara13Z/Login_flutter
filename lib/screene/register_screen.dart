@@ -14,6 +14,8 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreenState extends State<RegisterScreen> {
   bool _isObscure = true;
   bool _isValidEmail = false;
+   final TextEditingController _createEmailController =
+      TextEditingController();
   final TextEditingController _createusernameController =
       TextEditingController();
   final TextEditingController _createpasswordController =
@@ -57,6 +59,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
           children: [
             _logo,
             const SizedBox(height: 30),
+            _createGmailField,
+            const SizedBox(height: 20),
             _usernameField,
             const SizedBox(height: 20),
             _passwordField,
@@ -84,8 +88,37 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   Widget get _usernameField {
-    return TextField(
+    return TextFormField(
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter a username';
+        }
+        return null;
+      },
       controller: _createusernameController,
+      onChanged: (value) {
+        setState(() {
+          _isValidEmail = value.contains("@");
+        });
+      },
+      decoration: InputDecoration(
+          prefixIcon: const Icon(Icons.person_outline),
+          // suffixIcon: _isValidEmail
+          //     ? const Icon(Icons.check_circle, color: Colors.green)
+          //     : null,
+          labelText: 'Username ',
+          border: const OutlineInputBorder()),
+    );
+  }
+  Widget get _createGmailField {
+    return TextFormField(
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter a email';
+        }
+        return null;
+      },
+      controller: _createEmailController,
       onChanged: (value) {
         setState(() {
           _isValidEmail = value.contains("@");
@@ -96,13 +129,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
           suffixIcon: _isValidEmail
               ? const Icon(Icons.check_circle, color: Colors.green)
               : null,
-          labelText: 'Username or Email',
+          labelText: 'Email',
           border: const OutlineInputBorder()),
     );
   }
-
   Widget get _passwordField {
-    return TextField(
+    return TextFormField(
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter a password';
+        } else if (value.length < 6) {
+          return 'Password must be at least 6 characters';
+        }
+        return null;
+      },
       controller: _createpasswordController,
       obscureText: _isObscure,
       decoration: InputDecoration(
@@ -141,26 +181,28 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   void _performRegistration() {
     String createusername = _createusernameController.text.trim();
+    String creategmail = _createEmailController.text.trim();
     String createpassword = _createpasswordController.text.trim();
 
-    if (createusername.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a username/email.')),
-      );
-      return;
-    }
-    if (createpassword.isEmpty || createpassword.length < 6) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text('Password must be at least 6 characters.')),
-      );
-      return;
-    } else {
-      AppRoute.key.currentState?.pushNamed(AppRoute.phoneScreen);
-    }
+    // if (createusername.isEmpty) {
+    //   ScaffoldMessenger.of(context).showSnackBar(
+    //     const SnackBar(content: Text('Please enter a username/email.')),
+    //   );
+    //   return;
+    // }
+    // if (createpassword.isEmpty || createpassword.length < 6) {
+    //   ScaffoldMessenger.of(context).showSnackBar(
+    //     const SnackBar(
+    //         content: Text('Password must be at least 6 characters.')),
+    //   );
+    //   return;
+    // } else {
+    //   AppRoute.key.currentState?.pushNamed(AppRoute.phoneScreen);
+    // }
 
     print('Attempting to register:');
     print('Username: $createusername');
+    print("Email:$creategmail");
     print('Password: $createpassword');
   }
 

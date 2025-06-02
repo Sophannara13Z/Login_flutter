@@ -8,33 +8,31 @@ import 'package:project1/screene/home_screen.dart';
 
 class MainScreen extends StatefulWidget {
 
-  final String username;
-  const MainScreen({super.key,required this.username});
+  
+  const MainScreen({super.key});
 
   @override
   State<MainScreen> createState() => _MainScreenState();
 }
 
 class _MainScreenState extends State<MainScreen> {
- late List<Widget> _screens; // Use 'late' for initialization in initState
+
+
+  List<Widget> _screens = [
+    HomeScreen(),
+    FavoriteScreen(),
+    CartScreen(),
+    AccountScreen(username: "Sophannara"),
+  ];
+
   int _selectedIndex = 0;
-  @override
-  void initState() {
-    super.initState();
-    // Initialize the _screens list here, passing the username to relevant screens
-    _screens = [
-      HomeScreen(username: widget.username), // Pass username to HomeScreen
-      FavoriteScreen(), // Assuming FavoriteScreen doesn't need username directly
-      CartScreen(),     // Assuming CartScreen doesn't need username directly
-      AccountScreen(username: widget.username), // Pass username to AccountScreen
-    ];
-  }
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
