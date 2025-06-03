@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:project1/data/user_share_prefereces.dart';
 import 'package:project1/screene/custom_search_delegate.dart';
 
 
@@ -11,6 +12,23 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+    String userName = "Guest";
+
+  void initState() {
+    super.initState();
+    _fetchFullName();
+  }
+
+  Future<void> _fetchFullName() async {
+    String? name = await UserSharedPreference.getUserData("username");
+
+    if (name != null) {
+      setState(() {
+        userName = name;
+      });
+    }
+  }
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,7 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
           color: Colors.black,
         ),
         title: Text(
-          "Hi, Sophannara",
+          "Hi, $userName",
           style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
         actions: [

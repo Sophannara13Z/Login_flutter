@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:project1/data/user_share_prefereces.dart';
 import 'package:project1/route/app_route.dart';
 import 'package:project1/screene/login_screen.dart';
 // Make sure this import points to your PhoneOTPScreen file
@@ -14,20 +15,12 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreenState extends State<RegisterScreen> {
   bool _isObscure = true;
   bool _isValidEmail = false;
-   final TextEditingController _createEmailController =
-      TextEditingController();
+  final _resgisterFormKey = GlobalKey<FormState>();
+  final TextEditingController _createEmailController = TextEditingController();
   final TextEditingController _createusernameController =
       TextEditingController();
   final TextEditingController _createpasswordController =
       TextEditingController();
-
-  @override
-  void dispose() {
-    _createusernameController.dispose();
-    _createpasswordController.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -53,26 +46,29 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return Center(
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            _logo,
-            const SizedBox(height: 30),
-            _createGmailField,
-            const SizedBox(height: 20),
-            _usernameField,
-            const SizedBox(height: 20),
-            _passwordField,
-            const SizedBox(height: 30),
-            _registerButton,
-            const SizedBox(height: 40),
-            const Text("Or Register With"),
-            const SizedBox(height: 10),
-            _socialLoginButtons,
-            const SizedBox(height: 30),
-            _alreadyHaveAccountLink,
-          ],
+        child: Form(
+          key: _resgisterFormKey,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              _logo,
+              const SizedBox(height: 30),
+              _createGmailField,
+              const SizedBox(height: 20),
+              _usernameField,
+              const SizedBox(height: 20),
+              _passwordField,
+              const SizedBox(height: 30),
+              _registerButton,
+              const SizedBox(height: 40),
+              const Text("Or Register With"),
+              const SizedBox(height: 10),
+              _socialLoginButtons,
+              const SizedBox(height: 30),
+              _alreadyHaveAccountLink,
+            ],
+          ),
         ),
       ),
     );
@@ -110,6 +106,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           border: const OutlineInputBorder()),
     );
   }
+
   Widget get _createGmailField {
     return TextFormField(
       validator: (value) {
@@ -133,6 +130,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           border: const OutlineInputBorder()),
     );
   }
+
   Widget get _passwordField {
     return TextFormField(
       validator: (value) {
@@ -180,30 +178,30 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   void _performRegistration() {
-    String createusername = _createusernameController.text.trim();
-    String creategmail = _createEmailController.text.trim();
-    String createpassword = _createpasswordController.text.trim();
+    // String createusername = _createusernameController.text.trim();
+    // String creategmail = _createEmailController.text.trim();
+    // String createpassword = _createpasswordController.text.trim();
+    if (_resgisterFormKey.currentState?.validate() == true) {
+      // Process call API to backend
 
-    // if (createusername.isEmpty) {
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     const SnackBar(content: Text('Please enter a username/email.')),
-    //   );
-    //   return;
-    // }
-    // if (createpassword.isEmpty || createpassword.length < 6) {
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     const SnackBar(
-    //         content: Text('Password must be at least 6 characters.')),
-    //   );
-    //   return;
-    // } else {
-    //   AppRoute.key.currentState?.pushNamed(AppRoute.phoneScreen);
-    // }
+      String createusername = _createusernameController.text;
+      String creategmail = _createEmailController.text;
+      String createpassword = _createpasswordController.text;
 
-    print('Attempting to register:');
-    print('Username: $createusername');
-    print("Email:$creategmail");
-    print('Password: $createpassword');
+      print('Username: $createusername');
+      print('Email: $creategmail');
+      print('Password: $createpassword');
+
+      UserSharedPreference.register(
+          createusername, creategmail, createpassword);
+      AppRoute.key.currentState?.pushNamed(AppRoute.mainScreen);
+    } else {
+      final alertDialog = AlertDialog(
+        title: Icon(Icons.error, color: Colors.red, size: 80),
+        content: Text("Please fill all fields correctly"),
+      );
+      showDialog(context: context, builder: (context) => alertDialog);
+    }
   }
 
   Widget get _socialLoginButtons {
@@ -247,6 +245,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       ],
     );
   }
+
   void _navigateToLogin() {
     AppRoute.key.currentState?.pushNamed(AppRoute.loginScreen);
   }

@@ -22,7 +22,7 @@ class _MainScreenState extends State<MainScreen> {
     HomeScreen(),
     FavoriteScreen(),
     CartScreen(),
-    AccountScreen(username: "Sophannara"),
+    AccountScreen(),
   ];
 
   int _selectedIndex = 0;
